@@ -1,0 +1,150 @@
+---
+title: "TimeSeriesML"
+author: "Nitin Khandare"
+date: "August 29, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(forecast)
+library(tidyverse)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+rp = 
+```
+
+
+```{r}
+t = seq(0,10,1)
+
+y = sin(t)
+
+e  =rnorm(101, 0, 0.05)
+
+signal = y + e
+
+plot(t, signal, type = 'l',xlab = 'time', ylab = "Sine wave")
+```
+
+```{r}
+# variables
+n <- 100 # number of data points
+t <- seq(0,4*pi,,100)
+a <- 3
+b <- 2
+c.unif <- runif(n)
+c.norm <- rnorm(n)
+amp <- 2
+
+# generate data and calculate "y"
+set.seed(1)
+y1 <- a*sin(b*t)+c.unif*amp # uniform error
+y2 <- a*sin(b*t)+c.norm*amp # Gaussian/normal error
+
+# plot results
+plot(t, y1, t="l", ylim=range(y1,y2)*c(1,1.2))
+lines(t, y2, col=2)
+legend("top", legend=c("y1", "y2"), col=1:2, lty=1, ncol=2, bty="n")
+```
+
+## sample output
+```{r}
+data("AirPassengers")
+
+plot(forecast(AirPassengers,h = 24))
+```
+
+### Scope for Prediction
+```{r}
+acf(AirPassengers)  ## Auto correlation of function
+
+
+acf(rp)
+```
+
+```{r}
+
+for (i in seq(1,5)){
+print(cor(AirPassengers[1:(length(AirPassengers)-i)],
+    AirPassengers[(i+1):length(AirPassengers)]))
+}
+```
+```{r}
+cor(sample_r[2:19],sample_r[2:20])
+```
+
+
+### Stationarity
+```{r}
+data("nottem")
+
+plot(as.vector(AirPassengers),type = 'l')
+
+
+
+vals = as.vector(AirPassengers)
+for (i in seq(0,3)) {
+  start = i*36+1
+  end = i*36+36
+  if(i==0){
+    plot(density(vals[start:end]), xlim = c(0,800))
+  }else{
+    lines(density.default(vals[start:end]))
+  }
+
+}
+```
+
+```{r}
+
+rp = rnorm(1:100)
+
+vals = rp
+for (i in seq(0,3)) {
+  start = i*36+1
+  end = i*36+36
+  if(i==0){
+    plot(density(vals[start:end]), xlim = c(0,800))
+  }else{
+    lines(density.default(vals[start:end]))
+  }
+
+}
+
+```
+
+```{r, fig.height= 10}
+plot(decompose(AirPassengers),type = 'l')
+```
+### moving Average
+```{r}
+
+e = rnorm(1)
+rp = c(e)
+
+errors = c(e)
+
+for(i in seq(2, 1000)){
+  curr_error = rnorm(1)
+  prev_error = errors[i-1]
+  curr_y = 0.8*prev_error + curr_error
+  y = append(y, curr_y)
+  errors = append(errors, curr_error)
+}
+
+plot(y, type = 'l')
+
+
+```
+```{r}
+acf(y)
+```
+
+
+```{r}
+pacf(y)
+```
+

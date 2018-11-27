@@ -1,0 +1,18 @@
+---
+title: "TimeSeries_Case_Study"
+author: "Nitin Khandare"
+date: "July 30, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(xgboost)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+msh = read.csv("E:/Term 2/Machine Learning/Datasets/mushroom_full.csv")
+
+data()
+```
+
