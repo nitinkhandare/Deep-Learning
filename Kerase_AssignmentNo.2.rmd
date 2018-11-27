@@ -1,0 +1,117 @@
+---
+title: "Keras_MNIST_AssignmentNo.2"
+author: "Nitin Khandare"
+date: "September 16, 2018"
+output: html_document
+---
+
+### For this assignment use KERAS as your library in R and write your own deep learning architecture to classify MNIST data. Without worrying on Accuracy, please experiment with the architecture and add dropouts to avoid overfitting.
+
+
+### GitHub Pack Setup
+```{r}
+#install.packages("devtools")
+#devtools::install_github("rstudio/keras")
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Keras and Tesnsorflow setup with Cuda Envi.
+```{r}
+# library(keras)
+
+#install.packages("tensorflow")
+#install_keras()
+#install_tensorflow()
+
+#install_tensorflow(gpu=TRUE)
+```
+
+## load the TensorFLow Library
+```{r}
+library(tensorflow)
+```
+
+## loading keras library
+```{r}
+library(keras)
+```
+
+### loading the keras inbuilt mnist dataset
+```{r}
+mnist = dataset_mnist()
+```
+
+### separating train and test file
+```{r}
+
+train_x = mnist$train$x
+train_y = mnist$train$y
+test_x = mnist$test$x
+test_y = mnist$test$y
+
+#rm(data)
+```
+
+
+
+### Converting a 2D array into a 1D array for feeding into the MLP and normalising the matrix
+```{r}
+train_x = array(train_x, dim = c(dim(train_x)[1], prod(dim(train_x)[-1]))) / 255
+test_x = array(test_x, dim = c(dim(test_x)[1], prod(dim(test_x)[-1]))) / 255
+```
+
+
+
+### Converting the target variable to once hot encoded vectors using keras inbuilt function
+```{r}
+train_y = to_categorical(train_y,10)
+test_y = to_categorical(test_y,10)
+```
+
+
+### Defining a keras sequential model
+```{r}
+model = keras_model_sequential()
+```
+
+
+## Defining the model with 1 input layer[784 neurons], 1 hidden layer[784 neurons] with dropout rate 0.4 and 1 output layer[10 neurons]
+## i.e number of digits from 0 to 9
+
+```{r}
+model %>% 
+layer_dense(units = 784, input_shape = 784) %>% 
+layer_dropout(rate=0.5)%>%
+layer_activation(activation = 'relu') %>% 
+layer_dense(units = 10) %>% 
+layer_activation(activation = 'softmax')
+
+```
+
+
+### Compiling the defined model with metric = accuracy and optimiser as adam.
+```{r}
+model %>% compile(
+loss = 'categorical_crossentropy',
+optimizer = 'adam',
+metrics = c('accuracy')
+)
+```
+
+
+### Fitting the model on the training dataset
+```{r}
+model %>% fit(train_x, train_y, epochs = 10, batch_size = 128)
+```
+
+
+### Evaluating model on the cross validation dataset
+```{r}
+loss_and_metrics = model %>% evaluate(test_x, test_y, batch_size = 128)
+```
+
+## Check the Accuracy and Loss
+```{r}
+loss_and_metrics
+```
+
